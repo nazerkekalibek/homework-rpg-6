@@ -22,7 +22,7 @@ public class AttackCommand implements ActionCommand {
     @Override
     public void undo() {
         target.restoreHealth(damageDealt);
-    }
+    } 
 
     @Override
     public String getDescription() {
