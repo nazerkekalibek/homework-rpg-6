@@ -14,20 +14,18 @@ public class AttackCommand implements ActionCommand {
 
     @Override
     public void execute() {
-        // TODO: Deal attackPower damage to the target using target.takeDamage(int).
-        // TODO: Store the actual damage dealt in damageDealt so that undo() can reverse it exactly.
-        // TODO: Consider: should damageDealt be capped at the target's remaining health?
+        int before=target.getHealth();
+        target.takeDamage(attackPower);
+        damageDealt=before-target.getHealth();
     }
 
     @Override
     public void undo() {
-        // TODO: Restore the stored damageDealt to the target using target.restoreHealth(int).
-        // Note: Use damageDealt (what was actually applied), not attackPower.
+        target.restoreHealth(damageDealt);
     }
 
     @Override
     public String getDescription() {
-        // TODO: Return a readable summary, e.g. "Attack for 18 damage".
-        return "TODO";
+        return "Attack for "+attackPower;
     }
 }
