@@ -28,4 +28,4 @@ public class ArenaOpponent {
     public boolean isAlive() {
         return health > 0;
     }
-}
+} 
