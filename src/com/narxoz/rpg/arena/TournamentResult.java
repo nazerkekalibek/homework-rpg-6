@@ -17,4 +17,4 @@ public class TournamentResult {
 
     public void addLine(String line) { log.add(line); }
     public List<String> getLog() { return Collections.unmodifiableList(log); }
-}
+} 
