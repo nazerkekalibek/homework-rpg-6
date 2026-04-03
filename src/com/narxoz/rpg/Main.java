@@ -18,11 +18,9 @@ public class Main {
     public static void main(String[] args) {
         System.out.println("=== Homework 6 Demo: Chain of Responsibility + Command ===\n");
 
-        // TODO: Replace placeholder stats with your own meaningful hero values.
-        ArenaFighter hero = new ArenaFighter("Hero", 100, 0.20, 25, 5, 18, 3);
+        ArenaFighter hero = new ArenaFighter("Shadow Knight", 110, 0.30, 20, 7, 20, 2);
 
-        // TODO: Replace placeholder stats with your own meaningful opponent values.
-        ArenaOpponent opponent = new ArenaOpponent("Champion", 90, 14);
+        ArenaOpponent opponent = new ArenaOpponent("Blood Reaper", 95, 15);
 
         // -----------------------------------------------------------------------
         // Part 1 — Command Queue Demo
@@ -30,19 +28,15 @@ public class Main {
         System.out.println("--- Command Queue Demo ---");
 
         ActionQueue queue = new ActionQueue();
-
-        // Enqueue three hero actions.
         queue.enqueue(new AttackCommand(opponent, hero.getAttackPower()));
-        queue.enqueue(new HealCommand(hero, 20));
-        queue.enqueue(new DefendCommand(hero, 0.15));
+        queue.enqueue(new HealCommand(hero, 25));
+        queue.enqueue(new DefendCommand(hero, 0.20));
 
         System.out.println("Queued actions:");
-        // TODO: Print all queued commands using queue.getCommandDescriptions().
         for (String desc : queue.getCommandDescriptions()) {
             System.out.println("  " + desc);
         }
 
-        // Demonstrate undoLast() — removes the last queued command.
         System.out.println("\nUndoing last queued action...");
         queue.undoLast();
 
@@ -51,27 +45,28 @@ public class Main {
             System.out.println("  " + desc);
         }
 
-        // Re-queue the defend action and execute everything.
         queue.enqueue(new DefendCommand(hero, 0.15));
         System.out.println("\nExecuting all queued commands...");
         queue.executeAll();
+
+        System.out.println("Enemy HP: " + opponent.getHealth());
+        System.out.println("Hero HP: " + hero.getHealth());
 
         // -----------------------------------------------------------------------
         // Part 2 — Defense Chain Demo
         // -----------------------------------------------------------------------
         System.out.println("\n--- Defense Chain Demo ---");
 
-        // Build a standalone chain to prove it works independently.
-        DefenseHandler dodge = new DodgeHandler(0.50, 99L);
-        DefenseHandler block = new BlockHandler(0.30);
-        DefenseHandler armor = new ArmorHandler(5);
+        DefenseHandler dodge = new DodgeHandler(0.40, 99L);
+        DefenseHandler block = new BlockHandler(0.35);
+        DefenseHandler armor = new ArmorHandler(6);
         DefenseHandler hp    = new HpHandler();
         dodge.setNext(block).setNext(armor).setNext(hp);
 
         System.out.println("Sending 20 incoming damage through the defense chain...");
         System.out.println("Hero HP before: " + hero.getHealth());
-        // TODO: Route 20 points of incoming damage through the chain.
-        dodge.handle(20, hero);
+        
+        dodge.handle(25, hero);
         System.out.println("Hero HP after:  " + hero.getHealth());
 
         // -----------------------------------------------------------------------
@@ -79,9 +74,8 @@ public class Main {
         // -----------------------------------------------------------------------
         System.out.println("\n--- Full Arena Tournament ---");
 
-        // TODO: Replace these placeholder names and stats with your own characters.
-        ArenaFighter tournamentHero     = new ArenaFighter("Erlan",    120, 0.25, 25, 8, 22, 3);
-        ArenaOpponent tournamentOpponent = new ArenaOpponent("Iron Vane", 100, 16);
+        ArenaFighter tournamentHero  = new ArenaFighter("Storm Blade", 130, 0.28, 30, 10, 24, 3);
+        ArenaOpponent tournamentOpponent = new ArenaOpponent("Dark Gladiator", 105, 18);
 
         TournamentResult result = new TournamentEngine(tournamentHero, tournamentOpponent)
                 .setRandomSeed(42L)
@@ -94,11 +88,58 @@ public class Main {
             System.out.println("  " + line);
         }
 
-        // TODO: Expand this demo so it clearly proves:
-        //   1) Command queue with visible undo (already partially shown above).
-        //   2) Defense chain reducing or absorbing incoming damage (shown above).
-        //   3) A complete tournament run with a readable round-by-round log.
-
         System.out.println("\n=== Demo Complete ===");
     }
 }
+
+//COMMAND PATTERN
+//-------------------
+//The Command pattern is used to encapsulate actions such as:
+// - Attack
+// - Heal
+// - Defend
+
+//Each action is represented as an object implementing ActionCommand.
+//This allows:
+// - Storing actions in a queue (ActionQueue)
+// - Executing them later
+// - Supporting undo functionality
+
+//Classes involved:
+// - ActionCommand (interface)
+// - AttackCommand, HealCommand, DefendCommand (concrete commands)
+// - ActionQueue (invoker)
+
+//CHAIN OF RESPONSIBILITY PATTERN
+//----------------------------------
+//This pattern is used to process incoming damage through a chain of handlers.
+
+//Damage flow:
+//Dodge → Block → Armor → HP
+
+//Each handler:
+// - Processes part of the damage
+// - Passes remaining damage to the next handler
+
+//Classes involved:
+// - DefenseHandler (abstract class)
+// - DodgeHandler
+// - BlockHandler
+// - ArmorHandler
+// - HpHandler
+
+//TOURNAMENT ENGINE
+//---------------------
+//Simulates a battle between a hero and an opponent.
+
+//Features:
+// - Uses Command pattern for hero actions
+// - Uses Chain of Responsibility for defense
+// - Tracks rounds and logs battle progress
+// - Determines the winner
+
+//OVERALL ARCHITECTURE
+//------------------------
+//- Loose coupling between components
+//- Clear separation of responsibilities
+//- Easily extendable (new commands or handlers can be added)
